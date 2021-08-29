@@ -103,7 +103,7 @@ def run_throug_p(mod, rem):
     p = []
     slen = 0
     #for i in range(6000, 120_000):
-    for i in [40_000]:
+    for i in range(2, 12_000):
 
         s = make_list_of_hilbert_primes(i, mod, rem)
         if slen == len(s):
@@ -126,13 +126,23 @@ def run_throug_p(mod, rem):
 def find_m_like_hikbert(n):
 
     m_list = []
-    for m in range(5, n):
+    for m in range(4, n):
         rem = [k for k in range(m)]
         for r in rem:
             if (r*r)%m == r and r!= 0 :  #and r!= 1
                 m_list.append((m, r))
 
     return m_list
+
+def check_for_ambigues_primes(num, rem):
+    #check primes in a form num*k + rem in terms of this numbers
+    list_of_primes = make_list_of_hilbert_primes(100, num, rem)
+
+    for i in range(0, 100):
+        
+        for p in list_of_primes:
+            pass
+
 
 
 
@@ -148,10 +158,13 @@ if __name__ == "__main__":
 
     # run_throug_p()
 
-    p = find_m_like_hikbert(100)
+    #p = find_m_like_hikbert(100)
 
-    for i in p:
-        run_throug_p(i[0], i[1])
+    # for i in p :
+    #     print(i)
+
+    # for i in p:
+    #     run_throug_p(i[0], i[1])
 
     # p = make_list_of_hilbert_primes(10000, 6, 3)
     
@@ -159,6 +172,8 @@ if __name__ == "__main__":
 
     # for i in p:
     #     print(i, (i-3)/6)
+
+    print(make_list_of_hilbert_primes(100, 4, 1))
     
 
     
