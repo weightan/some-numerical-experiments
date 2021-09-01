@@ -7,6 +7,9 @@ import itertools
 #import math
 #import ctypes
 from sympy import primefactors, sieve
+from sympy.ntheory import qs
+
+from tqdm import tqdm 
 
 from cicl_data import *
 
@@ -70,14 +73,20 @@ def flip_seq(start, nterms):
     arr = [start]
     current = start
 
-    for i in range(nterms):
+    for i in tqdm(range(nterms)):
 
         #print(1)
-        pf = min(primefactors(current)+ [current])
+        primes = qs(current, 220, 10_000)
+        if primes == set():
+            break
+
+        pf = min(primes )
+        if pf == 1:
+            break
 
         s = num_tostr(current, pf + 1)
 
-        if pf > 200:
+        if pf > 220:
             break
         
         s = flip_bit(s, pf)
@@ -106,7 +115,7 @@ def run():
     # cicl = []
 
     sieve._reset() # this line for doctest only
-    sieve.extend_to_no(11_000)
+    sieve.extend_to_no(15_000)
     primes = sieve._list 
 
     
@@ -115,8 +124,8 @@ def run():
 
     #primes = [19*i  ]
 
-    primes = list(itertools.combinations(primes[11_000:], 2))
-    primes = [29*i[0] for i in primes]
+    primes = list(itertools.combinations(primes[10000:], 3))
+    primes = [7*i[0] for i in primes]
 
     #primes = test
 
@@ -124,13 +133,14 @@ def run():
 
     for i in primes:
 
-        arr = flip_seq(i, 40)
+        arr = flip_seq(i, 20)
         s = []
         for j in range(len(arr)):
 
             if j < len(arr) and arr[j] in s:
                 s.append(arr[j])
                 ci_temp = ci_temp + [s]
+                print(s, ',')
 
                 break
             
@@ -141,8 +151,8 @@ def run():
         #print(i, s)
 
 
-    for i in ci_temp:
-        print(i, ',')
+    # for i in ci_temp:
+    #     print(i, ',')
 
 
 

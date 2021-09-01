@@ -5,6 +5,7 @@ from tqdm import tqdm
 import scipy
 import functools
 import operator
+from sympy import primefactors, sieve
 
 import random
 from sympy import *
@@ -161,10 +162,11 @@ def per_cube_range():
     for i, (k, v) in enumerate(min_dict.items()):
         print(v)
 
+arr_cubes  = [i for i in range(1, int(math.pow(177663375, 1/3)) + 4)]
 
 def decomp_n(n):
     arr_tripl = []
-    arr_cubes  = [i for i in range(1, int(math.pow(n, 1/3)) + 4)]
+    
 
     for x in arr_cubes:
         if n - x**3 > 1:
@@ -179,10 +181,64 @@ def decomp_n(n):
 
 
 
+def dec_from_file():
+    with open('five or more ways.txt') as reader:
+        for line in reader.readlines()[::-1]:
+            line =  line.replace("(", ' ')
+            line =  line.replace(")", ' ')
+            line =  line.replace(",", ' ')
+
+            line = line.split()
+            nums = [int(i) for i in line]
+
+            dec_n = nums[1]
+
+            decomp_arr = decomp_n(dec_n)
+
+
+            if len(set( forfor (decomp_arr) ))  == len (forfor (decomp_arr) ):
+
+                print(dec_n, len (decomp_arr))
+
+
+
+def check_remainders_of_sum_cubes(mod):
+
+    rems = [i for i in range(1, mod+1)]
+
+    possible_rems_of_n = []
+
+    for i in itertools.combinations_with_replacement(rems, 3):
+        temp_rem = ( i[0]**3+ i[1]**3+i[2]**3)%mod
+        if temp_rem not in possible_rems_of_n:
+            possible_rems_of_n.append(temp_rem)
+
+    return possible_rems_of_n
+
+
+
 
 
 if __name__ == "__main__":
-    print(decomp_n(5104))
+    #print(decomp_n(5104))
+    #dec_from_file()
+
+    sieve._reset() # this line for doctest only
+    sieve.extend_to_no(50)
+    primes = sieve._list 
+
+    arr_of_mod = []
+
+    for i in primes:
+        rems = check_remainders_of_sum_cubes(i)
+        effectivnes = len(rems)/i
+
+        arr_of_mod.append((i, effectivnes, sorted(rems)))
+        
+    arr_of_mod = sorted(arr_of_mod, key = lambda x: x[1])
+
+    for i in arr_of_mod:
+        print(i[:2:])
 
 
 

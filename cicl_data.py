@@ -21546,10 +21546,14 @@ with29 = [[9978667, 9454379, 9456427, 1067819, 1592107, 1590059, 9978667] ,
 from sympy import primefactors
 
 def sort_cycles():
-    t = []
+    t = with17_11  + with29 +with17 + with19
 
-    for i in cicles:
-        t.append(i[len(i) - 5:])
+    x = [85,93,117,125,145,153,177,185,325,333,357,365,385,393,417,425,535,543,567,575,595,603,627,635,775,783,807,815,835,843,867,875]
+
+    
+
+    # for i in cicles:
+    #     t.append(i[len(i) - 5:])
 
     t2 = []
 
@@ -21567,9 +21571,23 @@ def sort_cycles():
         
     t = t2
 
+
+
     t = sorted(t, key = lambda x: min(x))
-    for i in t:
-        print(i, ',')
+
+
+    
+
+    for mod in range(10000, 0, -1):
+        arr_rema =[]
+        for i in t: 
+            for j in i:
+                arr_rema.append( j % mod )
+
+                # print(j, primefactors(j))
+        print(len(set(arr_rema) ), mod)
+
+        #print(i, ',')
 
 def find_big_cycles():
     for i in cicles:
@@ -21580,7 +21598,7 @@ def find_factors():
     arr_fact = []
 
 
-    for i in cicles:
+    for i in with29:
         temp = []
         for j in i:
 
@@ -21594,15 +21612,20 @@ def find_factors():
         if  temp not in arr_fact:
 
             arr_fact.append(temp)
+            print(i)
 
     for i in arr_fact:
         print(i)
 
 
 if __name__ == "__main__":
-    #sort_cycles()
+    sort_cycles()
     #find_big_cycles()
-    find_factors()
+
+
+    #find_factors()
+
+    #print(primefactors(19820251) )
 
 
     

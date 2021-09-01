@@ -4,6 +4,7 @@ from tqdm import tqdm
 from collections import Counter
 from arrs import *
 import math
+from sympy import primefactors, sieve
 
 def make_list_of_primes(n):
     primes = []
@@ -123,33 +124,177 @@ def run_throug_p(mod, rem):
     #print(p)
 
 
-def find_m_like_hikbert(n):
+def find_rems_like_hilbert(minn , n):
 
     m_list = []
-    for m in range(4, n):
+    for m in tqdm(range(1, n) ):
+        for r in range(1, m):
+            if (r*r)%m == r  :  #and r!= 1
+                m_list.append((m, r))
+
+    return m_list
+
+
+def find_rems_like_hilbert_dict(minn = 1 , n = 30_000):
+
+    maxarr = (30030,   [1, 715, 1365, 1716,
+                        2080, 2640, 2926, 3081,
+                        4005, 4291, 5005, 6006,
+                        6370, 6721, 6930, 7371,
+                        7645, 8086, 8295, 8646,
+                        9010, 10011, 10725, 11011,
+                        11935, 12090, 12376, 12936,
+                        13300, 13651, 14301, 15015,
+                        15016, 15730, 16380, 16731,
+                        17095, 17655, 17941, 18096,
+                        19020, 19306, 20020, 21021,
+                        21385, 21736, 21945, 22386,
+                        22660, 23101, 23310, 23661,
+                        24025, 25026, 25740, 26026,
+                        26950, 27105, 27391, 27951,
+                        28315, 28666, 29316])
+
+    maxlen = len(maxarr[1])
+
+    m_dict = {}
+    for m in tqdm(range(minn, n)):
+        for r in range(1, m) :
+            if (r*r)%m == r  :  
+                m_dict [m] = m_dict.get(m, [])  + [r]
+
+    
+    sieve._reset() 
+    sieve.extend_to_no(20)
+    primes = sieve._list 
+
+    primes_two = [i[0]*i[1]*i[2]*i[3] for i in itertools.combinations(primes, 4)]
+
+
+    for k, v in m_dict.items():
+        if k in primes_two:
+            print(k, v)
+            # maxlen = len(v)
+            # maxarr = (k, v)
+
+    
+
+
+    
+
+
+def find_m_like_hikbert_with_addition(n):
+
+    m_list = []
+    for m in range(3, n):
         rem = [k for k in range(m)]
         for r in rem:
-            if (r*r)%m == r and r!= 0 :  #and r!= 1
+            if (r*r)%m == r and (2*r)%m == r and r!= 0 :  #and r!= 1
                 m_list.append((m, r))
 
     return m_list
 
 def check_for_ambigues_primes(num, rem):
     #check primes in a form num*k + rem in terms of this numbers
+    list_of_primes = make_list_of_hilbert_primes(10_000, num, rem)
+
+    s_sum = []
+    for i in itertools.combinations(list_of_primes, 2):
+        this_number = i[0] * i[1]    # + i[2] * i[3]
+        s_sum.append((this_number, i) )
+
+    s_sum = sorted(s_sum)
+
+    m = 0
+    mi = 0
+    current = 1
+
+    for i in range(1, len(s_sum)):
+        
+        if s_sum[i - 1][0] == s_sum[i][0] :
+            curent += 1
+            
+            if curent > m:
+                m = curent
+                mi = s_sum[i]
+        else:
+            curent = 1
+
+
+    return (num, rem, mi, m)
+
+def check_comb_min(num = 7, rem = 1):
+    # num = 8
+    # rem = 1
+
     list_of_primes = make_list_of_hilbert_primes(100, num, rem)
 
-    for i in range(0, 100):
-        
-        for p in list_of_primes:
-            pass
+    dict_n = {}
+
+    rems = list(range(1, num +1 ))
+
+    for i, j in itertools.combinations_with_replacement(rems, 2):
+
+
+        current = (i * j )% num 
+
+        v = dict_n.get(current, [])
+        dict_n[current] = v + [(i, j)]
+
+    lis = sorted(dict_n.items(), key = lambda x:x[0])
+
+    for k, v in lis:
+        a = []
+        for  i in set(v):
+            if k not in i and k not in[0] :
+                a.append(i)
+        dict_n[k] =  a
+        print(k, a)
+
+            
+    # for k, v in dict_n.items():
+    #      set(v)
+
+    return dict_n
+
+def check_all_primes(list_of_rem, num, rem):
+
+
+    #for i in itertools.combinations():
+        pass
+
+from math import prod, factorial
+from itertools import product
+
+def factors():
+    a = [[1], [2, 3], [4, 4], [2, 2, 4], [3, 3, 4], [2, 2, 2, 2], [3, 3, 3, 3]]
+    t = []
+    for i in range(len(a)):
+        t.append(i * [0])
+        for j in range(i, len(a)):
+            b = a[i] + a[j]
+            b.sort()
+            x = 0
+            for k in range(len(a)):
+                for l in range(k, len(a)):
+                    c = a[k] + a[l]
+                    c.sort()
+                    if b == c:
+                        x += prod([factorial(c.count(n)) / (factorial(a[k].count(n)) * factorial(c.count(n) - a[k].count(n))) for n in range(min(c), max(c) + 1)]) / [1, 2][k == l]
+            t[-1].append(int(x))
+
+    m = max([len(str(t[i][j])) for i, j in product(range(len(t)), repeat=2)])
+
+    for i in t:
+        print("")
+        for j in i:
+            print(j, (m-len(str(j))) * " ", end="")
 
 
 
 
 
-
-if __name__ == "__main__":
-
+def test():
+    pass
     # s = make_list_of_hilbert_primes(4389)
 
     # char = biggest_comp_num_2(s)
@@ -173,7 +318,63 @@ if __name__ == "__main__":
     # for i in p:
     #     print(i, (i-3)/6)
 
-    print(make_list_of_hilbert_primes(100, 4, 1))
-    
+    # print(make_list_of_hilbert_primes(100, 4, 1))
+
+from numba import jit
+
+
+def test_yto_con():
+
+    n_min = 2000
+
+    n_max = 2200
+
+    arr_out = []
+
+    for n in range(n_min, n_max):
+        s = list(range(n_min, n))
+
+        for i in itertools.combinations_with_replacement(s, 2):
+            if (i[0] * i[1]) % n == 1 and i[0] != i[1] :
+                arr_out.append((n, i))
+                #print((n, i))
+
+    arr_out = set(arr_out)
+
+    arr_nums = [i[0] for i in arr_out]
+
+    arr_sum = []
+
+    # for n in arr_nums:
+    #     for j in arr_out:
+    #         if j[0] == n and j[1][0]  < 4 :
+    #             arr_sum.append( j)
+
+    # for i in sorted(set(arr_sum)):
+    #     print(i)
+
+
+    for i in range(n_min, n_max):
+        if not (i  in arr_nums):
+            print (i) 
+
+                
+
+
+
+
+if __name__ == "__main__":
+
+    find_rems_like_hilbert_dict()
+
+
+            
+
+
+
+
+
+
 
     
+
