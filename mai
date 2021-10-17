@@ -1,0 +1,96 @@
+fn is_a_term_of_seq(n:u64, cubes: &[u64], N_I:u64 ) -> u8{
+    let mut c:u8 = 0;
+
+    //let mut seen_cubes: [u32; N_I as usize] = [0; N_I as usize];
+    let mut seen_cubes : Vec<u8>  = vec![0; N_I as usize];
+
+    for x in 0..N_I -1{
+        if n > 1 + cubes[x as usize]{
+            for y in 0..x  {
+                if n >  cubes[x as usize] + cubes[y as usize] {
+                    for z in 0..y {
+                        if n ==  cubes[x as usize] + cubes[y as usize] + cubes[z as usize]{
+
+                            //println!("{}, {}, {}", x+1,y+1,z+1);
+
+                            if seen_cubes[(x+1)as usize] ==0 && seen_cubes[(y+1)as usize] ==0 && seen_cubes[(z+1)as usize] ==0 && x != y && x != z{
+                                c += 1;
+                            } else {
+                                return  0;
+                            }
+                            seen_cubes[(x+1)as usize] +=1;
+                            seen_cubes[(y+1)as usize] +=1;
+                            seen_cubes[(z+1)as usize] +=1;
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return  c;
+}
+//16, 36_013_192_704
+//17, 16_405_416_000
+//18, 96_569_712_000
+//19, 48_805_535_232
+//20, 131_243_328_000
+
+fn main() {
+    let mut seq_terms : Vec<u8>  = vec![0; 80];
+    let mut out : Vec<u64>  = vec![0; 80];
+
+    let sample_size:u64 = 800_000_000;
+
+    for iter_m in 0..150{
+
+        let low_bound:u64  = 6_100_691_904 + (iter_m*sample_size) -  100;
+        let high_bound:u64  = 6_100_691_904  + (iter_m+1)*sample_size ;
+
+        let n_i:u64 = ((high_bound as f64).cbrt()).floor() as u64;
+        let l_est:u64 = (((low_bound as f64) / 3.01).cbrt()).floor() as u64 - 10;
+
+        println!("i = {}",  iter_m);
+
+        let n:u64  = high_bound - low_bound;
+
+        let cubes : Vec<u64> = (1..n_i).map(|x| x*x*x).collect();
+
+        let mut seen_sums : Vec<u8>  = vec![0; n as usize];
+        let mut num:u64;
+
+        for x in l_est..n_i -1{
+            // if x % 200 == 0{
+            //     println!("{}", x);
+            // }
+            for y in 0..x{
+                for z in 0..y{
+                    num = cubes[x as usize] + cubes[y as usize] + cubes[z as usize];
+                    if num < high_bound && num >= low_bound {
+                        seen_sums[(num - low_bound) as usize] += 1;
+                    }
+                }
+            }
+        }
+
+        for (pos, &e) in seen_sums.iter().enumerate() {
+            if e >= 15 && seq_terms[e as usize] == 0 && is_a_term_of_seq(pos as u64 + low_bound, &cubes, n_i) == e as u8 {
+                seq_terms[e as usize] = 1;
+                out[e as usize] = pos as u64 + low_bound;
+                println!(" ________________ {}, {}", e, pos as u64 + low_bound);
+            }
+        }
+
+
+    }
+
+    for (pos, &e) in out.iter().enumerate() {
+        if e != 0{
+            println!("{}, {}", pos, e);
+        }
+    }
+
+
+
+
+}

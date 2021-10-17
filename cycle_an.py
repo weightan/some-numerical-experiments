@@ -165,21 +165,25 @@ def run_primes():
 
 
 
+
 def run():
 
     cycl_temp = []
     pa = []
     cr = []
     #13, 43,115,123,139, 151,159
+    start = [22940087415191]
 
-    for i in [13, 43, 115, 123, 139, 151,159] : #range(3, 400, 2):
+    for i in start : #range(3, 400, 2):
 
-        c = flip_seq(i, 10_000)
+        #print(i)
+
+        c = flip_seq(i, 8)
 
         cy = findcycle(c)
         print(i, len(c) , len(cy))
-
-        print_arr_as_powers(c)
+ 
+       #print_arr_as_powers(c)
 
         if len(cy) >= 7:
             cycl_temp = cycl_temp +  [cy]
@@ -272,11 +276,49 @@ def findcycle(c):
     return []
 
 
+import random
+
+
+
+def first_div_ret1(n):
+    for i in primes:
+        if n % i == 0:
+            return i 
+    return 0
+
+def find_trips():
+    np = [i for i in primes if i > 9473] + [1, 1, 1] 
+    #sp = [i for i in primes if i > 9473]
+
+    d =  (8237, -1) #2^p1-2^p2
+    out = []
+    for i in itertools.combinations(np, 2):
+        t = i[0]*i[1]*9473
+        n1 = t + 2**9473
+        c = first_div_ret1(n1)
+
+        if c and c in d and t not in out:
+
+            print ( t)
+            out.append(t)
+            if len(out) > 30:
+                print(out)
+
+
+
+
+
+    
+
+
+        
+
 
 if __name__ == "__main__":
-    #run()
-
     run()
+
+    #find_trips()
+    #find_trips()
 
     
     

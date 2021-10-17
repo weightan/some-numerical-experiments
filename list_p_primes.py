@@ -2,9 +2,10 @@
 import itertools
 from tqdm import tqdm
 from collections import Counter
-from arrs import *
+# from arrs import *
 import math
 from sympy import primefactors, sieve
+import matplotlib.pyplot as plt
 
 def make_list_of_primes(n):
     primes = []
@@ -358,23 +359,198 @@ def test_yto_con():
         if not (i  in arr_nums):
             print (i) 
 
-                
+def ternary (n):
+    if n == 0:
+        return '0'
+    nums = []
+    while n:
+        n, r = divmod(n, 3)
+        nums.append(str(r))
+    return ''.join(reversed(nums))                
 
 
+import math
 
 
-if __name__ == "__main__":
+def run_b():
+    from sympy.ntheory import totient, divisors
 
-    find_rems_like_hilbert_dict()
+    a = [ (sum(n*totient(d)//d  for d in divisors(n)), n) for n in range(1, 100_000)]
+    a = sorted(a)[:20_000]
+
+    c = [i[1] for i in a]
+    b = [i[0] for i in a]
+
+    #print(c, b)
+
+    # plt.plot(c,   ',')
+    # plt.ylabel('some numbers')
+    # plt.show()
+
+from itertools import chain, combinations, combinations_with_replacement
+
+def product(lst):
+    p = 1
+    for i in lst:
+        p *= i
+    return p
+
+def powerset(iterable):
+    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+ms = [(9_376,), 10_000] 
 
 
+def find_sets_like_hilbert():
+     for i in range(2, 100):
+        t = 0
+
+        #print(i)
+        for s in powerset(range(1, i)):
+            c = 1
             
 
+            for k in combinations_with_replacement(s, 2):
+                if (k[0]**2 * k[1]**2)%i not in s:
+                    c = 0 
+                    break
+
+            if c == 1 and s != () and len(s) > 1 :
+                print([s, i], ',')
+                t +=1
+
+        #print(t, end=' ')
+
+
+def find_sets_like_hilbert_oeis():
+    from itertools import chain, combinations, combinations_with_replacement
+    for i in range(1, 100):
+        t = 1
+        for s in chain.from_iterable(combinations((list(range(0, i))), r) for r in range(1, i)):
+            c = 1
+            for k in combinations_with_replacement(s, 2):
+                if (k[0]*k[1])%i not in s:
+                    c = 0 
+                    break
+            if c == 1:
+                t +=1
+        print(t, end=', ')
+
+
+def check_primes_set():
+    out = []
+    for i in tqdm(range(100_000_000)):
+        if i % ms[1] in ms[0]:
+            out.append(i)
+            #print(i)
+
+    primes = [] 
+
+    for i in out:
+
+        c = 1
+        for j in out:
+            if i % j == 0 and i != j and j != 1:
+                c  = 0
+                #print(i, j)
+                break
+            if j > i:
+                break
+
+        if c == 1:
+            primes.append(i)
+
+    out = []
+    # for i in powerset(primes):
+    #     out.append(product(i))
+
+    for i in combinations(primes, 2):
+        out.append(product(i))
+
+    #print(out)
+
+    out = sorted(out)
+    cmax = 0
+    citem = 0
+
+    for i in range(1, len(out)):
+        if out[i] == out[i-1]:
+            c += 1
+        else:
+            if c > cmax:
+                cmax = c
+                citem = out[i-1]
+            c = 0
+    print(cmax, citem)
+
+from sympy import prime
+
+def nprime(n, level):
+    if level > 1:
+        return nprime(prime(n), level - 1)
+    else:
+        return prime(n)
 
 
 
+def pr():
+    out = []
 
+    m = 13
+    r = 1
 
+    for i in tqdm(range(120_000)):
+        if i % m ==  r:
+            out.append(i)
+            #print(i)
 
-    
+    primes = [] 
+
+    for i in out:
+
+        c = 1
+        for j in out:
+            if i % j == 0 and i != j and j != 1:
+                c  = 0
+                #print(i, j)
+                break
+            if j > i:
+                break
+
+        if c == 1:
+            primes.append(i)
+
+    return primes
+
+if __name__ == "__main__":
+    #find_sets_like_hilbert()
+    #find_sets_like_hilbert_oeis()
+    #check_primes_set()
+
+    # primes = pr()
+    # #print(primes)
+
+    # ways = []
+
+    # for i in tqdm(range(2, max(primes), 13)):
+    #     t = 0
+    #     for p in primes:
+    #         if i - p < 2:
+    #             break
+    #         if i - p in primes:
+    #             t+=1
+
+    #     ways.append(t)
+
+    # import matplotlib.pyplot as plt
+    # plt.plot(ways, ',')
+    # plt.ylabel('some numbers')
+    # plt.show()
+
+    for i in range(1, 20):
+
+        print(nprime(i, i), end = ', ')
+
 
