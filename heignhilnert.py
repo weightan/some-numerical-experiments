@@ -11,6 +11,8 @@ import random
 import numpy as np 
 import pickle
 
+m = 7
+
 def pr(m = 4, r = 1):
     out = []
     for i in tqdm(range(400_000)):
@@ -34,6 +36,7 @@ def pr(m = 4, r = 1):
 
 
     return primes, out
+
 
 def eval_poly(n, signs = [1, 1, 1, 1, 1]):
 
@@ -72,25 +75,27 @@ def run():
             tmax = t
             pmax = i
 
-
+import functools 
+@functools.lru_cache(maxsize= 1_000)
 def is_a_hilbert_prime(n):
 
     if n < 1:
         return 0
 
-    if n == 1 or n == 5:
+    if n == 1 or n == m +1:
         return 1
 
-    if n % 4 != 1:
+    if n % m != 1:
         return 0
 
-    for i in range(5, n, 4):
+    for i in range(m+1, n, m):
         if n % i == 0:
             return 0
-        if i > n//5:
+        if i > n//(m + 1):
             break
 
     return 1
+
 
 def run2():
     #run()
@@ -140,47 +145,40 @@ def run2():
         else:
             print('--')
 
-def first():
-    #10189 15 [1, 0, -1, 0, 10189]
 
+def first():
     maxj = 0
 
-    #t = [  i for i in range(0, 50) if i % 4 == 1] + [  -i for i in range(0, 50) if i % 4 == 1] 
+    t = [i for i in range(0, 30) ] 
 
-    t = [1, 5, 0, 13, -1]
+    for p in itertools.product([1],t):
 
-    #random.shuffle(t)
+        coef = [0, *p[::-1]]
 
+        #print(coef)
 
-    for p in itertools.product([0,1],t,t,t):
-
-        coef = [*p, 0]
-
-        if p == (0,0,0,0):
+        if p == (0,0):
             continue
 
         for  i in range(10**5):
 
-            coef[4] = 4*i + 1
-            
+            coef[0] = i 
 
             for j in range(500):
 
-                n = 4*j + 1
+                n = m*j + 1
 
-                ars = coef[::-1]
-
-                f = ars[4]*n**4 + ars[3]*n**3 + ars[2]*n**2 + ars[1]*n + ars[0]
-
-                #f = eval_poly(4*j + 1, coef[::-1])
+                f = coef[2]*(n**2) + coef[1]*n + coef[0]
 
                 if  is_a_hilbert_prime(f) == 0:
                     break
 
-
                 if j > maxj:
-                    print(4*i + 1, j, coef[::-1])
+                    maxel =  coef
                     maxj = j
+                    print(j, maxel)
+
+    return (m, maxel, maxj)
 
 
 def factorial_hil(n):
@@ -191,32 +189,95 @@ def factorial_hil(n):
         s *= i
     return s
 
+from sympy import isprime
+
+
+@functools.lru_cache(maxsize= 2000)
+def arithmetic_derivative(n):
+    if n == 1 or n==0:
+        return 0
+    if isprime(n):
+        return 1
+
+def eval_poly2(n, coef):
+    return coef[0] + coef[1]*n + coef[2]*n**2
+
+
+def first2():
+
+    t1 = [j for j in range(10**3)]
+    t2 = [j for j  in range(10**2)]
+    t3 = [1]
+
+    for i in range(3, 10):
+        m = i
+        maxn = 0
+
+        for p in itertools.product(t3, t2, t1):
+
+
+            if p[1] == 0 and p[2] == 0:
+                continue
+
+            p = p[::-1]
+
+
+            for n in range(1, 500, m):
+
+                
+
+                f = p[0] + p[1]*n + p[2]*n**2
+
+                if  is_a_hilbert_prime(f) == 0:
+                    break
+
+                if n > maxn:
+                    print(n, p)
+                    maxn = n
+
+
+
+
 if __name__ == "__main__":
 
+    #from sympy import isprime
+    out = []
+    for i in range(3, 14):
+        m = i
+        t = first()
+        print(t)
+        out.append(t)
 
-    first()
+    print(out)
+
+
+    #first2()
 
 
     # c = [8213, 9, 9, 1, 1]
-    # c = [733, 89, 57, 1, 1]
-    # c = [1697, 13, -17, -1, 1]
+    # c = [19661, 185, 13, 1, 1]
+    # c = [22901, 317, 17, 1, 1]
+    # c =[23381, 197, 97, 1, 1]#26
+    # #c = [3092, 4, 1, 0, 0]
 
-    #c =  [22129, -9, 13, -1, 1]
+    # с =  [4273, 2716, 1, 1, 0] #mod3 32
+    # c = [313, 5, 1, 0, 0] 66
+    
 
-    # c = [772, 0, 1, 0, 0]
-    # c = [788, 8, 1, 0, 0]
-    # c = [866, 0, 3, 0, 0]
+    # c = [395, 5, 1, 0, 0] #mod5
 
-    # c = [788, -8, 1, 0, 0]
+    # c = [43421, 7, 1, 0, 0] #mod7
 
-    #c = [3092, 4, 1, 0, 0]
+    # # print([i%m for i in c])
+    # m = 7
 
-    # for i in range(100):
+    # for i in range(300):
     #     print(i, end = ' ')
 
-    #     i = 4*i + 1
+    #     i = m*i + 1
 
-    #     print(i, eval_poly(i, c), is_a_hilbert_prime(eval_poly(i, c)))
+    #     t = eval_poly(i, c)
+    #     print(i, t, is_a_hilbert_prime(t), 'isprime - ')
 
     
 

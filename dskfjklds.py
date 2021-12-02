@@ -8,22 +8,22 @@ import matplotlib.pyplot as plt
 from itertools import chain, combinations, combinations_with_replacement
 import functools 
 
-
-@functools.lru_cache(maxsize=1024)
+m = 970
+@functools.lru_cache(maxsize=10024)
 def a(n):
-    if n == 1:
-        return 1
-    if n == 2:
-        return 2
-    if n == 3:
-        return 3
-
-    if n % 4 == 0:
-        return a(n/4)
+    if n < m:
+        return (int(n)**2) % m
+    if n % m == 0:
+        return a(n/m)
     else:
-        return a(n - math.floor(n/4))
+        return a(n - math.floor(n/m))
 
 
 
 if __name__ == "__main__":
-    print([a(i) for i in range(1, 100)])
+    s = [a(i) for i in range(1, 50_000)]
+    print(s)
+    plt.plot(s, ',')
+    plt.ylabel('some numbers')
+    plt.show()
+

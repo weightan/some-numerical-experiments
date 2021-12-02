@@ -177,8 +177,6 @@ def chaos_supstr():
 
 
 def chaos_sup_comb():
-    
-    
     n = 2
 
     ar = list(itertools.combinations('12345', n))
